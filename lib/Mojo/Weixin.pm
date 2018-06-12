@@ -1,5 +1,5 @@
 package Mojo::Weixin;
-our $VERSION = '1.3.8';
+our $VERSION = '1.4.0';
 use Mojo::Weixin::Base 'Mojo::EventEmitter';
 use Mojo::IOLoop;
 use Mojo::Weixin::Log;
@@ -12,6 +12,10 @@ has http_debug          => sub{$ENV{MOJO_WEIXIN_HTTP_DEBUG} || 0 } ;
 has ua_debug            => sub{$_[0]->http_debug};
 has ua_debug_req_body   => sub{$_[0]->ua_debug};
 has ua_debug_res_body   => sub{$_[0]->ua_debug};
+has ua_retry_times          => 5;
+has ua_connect_timeout      => 10;
+has ua_request_timeout      => 35;
+has ua_inactivity_timeout   => 35;
 has log_level           => 'info';     #debug|info|msg|warn|error|fatal
 has log_path            => undef;
 has log_encoding        => undef;      #utf8|gbk|...
@@ -19,8 +23,12 @@ has log_head            => undef;
 has log_console         => 1;
 has log_unicode         => 0;
 has download_media      => 1;
-has disable_color       => 0;           #是否禁用终端打印颜色
+has disable_color       => ($^O eq 'MSWin32' ? 1 : 0);           #是否禁用终端打印颜色
 has send_interval       => 3;           #全局发送消息间隔
+has json_codec_mode     => 0;  #0表示使用from_json/to_json 1表示使用decode_json/encode_json
+
+has notice_api => 'https://raw.githubusercontent.com/sjdy521/Mojo-Weixin/master/NOTICE';
+has is_fetch_notice => 1; #是否启动时获取公告
 
 has is_init_group_member => 0;
 has is_update_group_member => 1;
@@ -67,10 +75,6 @@ has log     => sub{
 
 has is_ready                => 0;
 has is_stop                 => 0;
-has ua_retry_times          => 5;
-has ua_connect_timeout      => 10;
-has ua_request_timeout      => 35;
-has ua_inactivity_timeout   => 35;
 has is_first_login          => -1;
 has login_state             => 'init';
 has qrcode_upload_url       => undef;
@@ -79,6 +83,7 @@ has qrcode_count            => 0;
 has qrcode_count_max        => 10;
 has media_size_max          => sub{20 * 1024 * 1024}; #运行上传的最大文件大小
 has media_chunk_size        => sub{512 * 1024};#chunk upload 每个分片的大小
+has http_agent              => 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062';
 has ua                      => sub {
     my $self = $_[0];
     #local $ENV{MOJO_USERAGENT_DEBUG} = $_[0]->ua_debug;
@@ -86,9 +91,7 @@ has ua                      => sub {
     require Mojo::UserAgent;
     require Mojo::UserAgent::Proxy;
     require Storable if $_[0]->keep_cookie;
-    my $transactor = Mojo::UserAgent::Transactor->new(
-        name =>  'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062'
-    );
+    my $transactor = Mojo::UserAgent::Transactor->new(name =>  $self->http_agent);
     my $default_form_generator = $transactor->generators->{form};
     $transactor->add_generator(form => sub{
         #my ($self, $tx, $form, %options) = @_;
@@ -108,9 +111,9 @@ has ua                      => sub {
     Mojo::UserAgent->new(
         proxy              => sub{ my $proxy = Mojo::UserAgent::Proxy->new;$proxy->detect;$proxy}->(),
         max_redirects      => 7,
-        connect_timeout    => $_[0]->ua_connect_timeout,
-        request_timeout    => $_[0]->ua_request_timeout,
-        inactivity_timeout => $_[0]->ua_inactivity_timeout,
+        connect_timeout    => $self->ua_connect_timeout,
+        request_timeout    => $self->ua_request_timeout,
+        inactivity_timeout => $self->ua_inactivity_timeout,
         transactor         => $transactor,
     );
 };
@@ -270,6 +273,7 @@ sub new {
     });
     $Mojo::Weixin::Message::SEND_INTERVAL = $self->send_interval;
     $Mojo::Weixin::_CLIENT = $self;
+    $self->check_notice();
     $self;
 }
 

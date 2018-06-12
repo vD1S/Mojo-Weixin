@@ -2,6 +2,7 @@ package Mojo::Weixin::Plugin::IRCShell;
 $Mojo::Weixin::Plugin::IRCShell::PRIORITY = 99;
 use strict;
 use List::Util qw(first);
+use File::Spec ();
 BEGIN{
     $Mojo::Weixin::Plugin::IRCShell::has_mojo_irc_server = 0;
     eval{
@@ -17,6 +18,7 @@ sub call{
     $client->die("请先安装模块 Mojo::IRC::Server::Chinese") if not $Mojo::Weixin::Plugin::IRCShell::has_mojo_irc_server;
     my $master_irc_nick = $data->{master_irc_nick};
     my $upload_api = $data->{upload_api}; #'http://img.vim-cn.com/';
+    my $media_dir = $data->{media_dir} // $client->media_dir;
     my $is_load_friend = defined $data->{load_friend}?$data->{load_friend}:0;
     my %mode = ref($data->{mode}) eq "HASH"?%{$data->{mode}}:();
     $data->{auto_join_channel} = 1 if not defined $data->{auto_join_channel};
@@ -51,8 +53,12 @@ sub call{
             }
 
             # 群组会话里面发送文件的二级命令解析 i.e. sendFile /tmp/dog.png
-            if ($content =~ m/^(?:sendFile |!!)([^\s]+)$/i) {
+            #if ($content =~ m/^(?:sendFile |!!)([^\s]+)$/i) {
+            if ($content =~ m/^(?:sendFile |!!)(?|"([^"]+)"|'([^']+)'|([^\s"']+))/i) {
                 my $media_path = $1;
+                if($media_path !~ /^(\/|\.)/){#没有使用绝对路径或者相对路径
+                    $media_path = File::Spec->catfile($media_dir,$media_path);
+                }
                 if(-f $media_path or $media_path=~/^https?:\/\//){
                     $group->send_media($media_path);
                 }
@@ -101,8 +107,12 @@ sub call{
             my $friend = $client->search_friend(id=>$u->id);
             if(defined $friend){
                 # 好友会话里面发送文件二级命令解析 sendFile /tmp/dog.png
-                if ($content =~ m/^(?:sendFile |!!)([^\s]+)$/i) {
+                #if ($content =~ m/^(?:sendFile |!!)([^\s]+)$/i) {
+                if ($content =~ m/^(?:sendFile |!!)(?|"([^"]+)"|'([^']+)'|([^\s"']+))/i) {
                     my $media_path = $1;
+                    if($media_path !~ /^(\/|\.)/){#没有使用绝对路径或者相对路径
+                        $media_path = File::Spec->catfile($media_dir,$media_path);
+                    }
                     if(-f $media_path or $media_path=~/^https?:\/\//){
                         $friend->send_media($media_path);
                     }

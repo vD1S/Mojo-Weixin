@@ -8,6 +8,7 @@
 |[/openwx/get_user_info](API.md#获取用户数据)      |running |获取登录用户数据 |
 |[/openwx/get_friend_info](API.md#获取好友数据)  |running |获取好友数据 |
 |[/openwx/get_group_info](API.md#获取群组数据)       |running |获取群组数据 |
+|[/openwx/get_group_basic_info](API.md#获取群组基本数据)       |running |获取群组基本数据 |
 |[/openwx/get_avatar](API.md#获取用户或群组头像)          |running |获取用户或群组头像|
 |数据搜索相关                  |        |                |
 |[/openwx/search_friend](API.md#搜索好友对象)        |running |搜索好友对象|
@@ -298,6 +299,16 @@ API是通过加载`Openwx插件`的形式提供的，上述代码保存成 xxxx.
     },
 ]
 ```
+
+### 获取群组基本数据
+|   API  |获取群组基本数据（不包含群成员）
+|--------|:------------------------------------------|
+|uri     |/openwx/get_group_basic_info|
+|请求方法|GET\|POST|
+|请求参数|无|
+|调用示例|http://127.0.0.1:3000/openwx/get_group_basic_info|
+
+
 ### 发送好友消息
 |   API  |发送好友消息
 |--------|:------------------------------------------|
@@ -448,6 +459,7 @@ $client->load("Openwx",data=>{
     listen => [{host=>xxx,port=>xxx}],           #可选，发送消息api监听端口
     post_api=> 'http://127.0.0.1:3000/post_api', #可选，接收消息或事件的上报地址
     post_event => 1,                             #可选，是否上报事件，为了向后兼容性，默认值为1
+    post_stdout => 0,                            #可选，上报数据是否打印到stdout，适合管道交互信息方式，默认0
     post_media_data => 1,                        #可选，是否上报经过base64编码的图片原始数据，默认值为1
     post_event_list => ['login','stop','state_change','input_qrcode'], #可选，上报事件列表
 });
@@ -716,7 +728,7 @@ Server: Mojolicious (Perl)
 
 |  事件名称                    |事件说明    |上报参数列表
 |------------------------------|:-----------|:-----------------------------------------|
-|login                         |客户端登录  | *1*：表示经过二维码扫描，好友等id可能会发生变化<br>*0*： 表示未经过二维码扫描，好友等id不会发生变化
+|login                         |客户端登录  | *1*：表示经过二维码扫描，好友等id可能会发生变化<br>*0*： 表示未经过二维码扫描，好友等id不会发生变化<br>*-1*：表示登录异常，第二个参数包含异常原因
 |stop                          |客户端停止    | 客户端停止运行，程序退出
 |state_change                  |客户端状态变化|旧的状态，新的状态 （参见[客户端状态说明](https://github.com/sjdy521/Mojo-Weixin/blob/master/Controller-API.md#客户端运行状态介绍)）
 |input_qrcode                  |扫描二维码  | 二维码本地保存路径，二维码原始数据的base64编码
@@ -849,13 +861,13 @@ Content-Type: application/json
 |--------|:------------------------------------------|
 |uri     |/openwx/consult|
 |请求方法|GET\|POST|
-|请求参数|**id**: 好友的id<br>**account**: 好友的帐号<br>**displayname**: 好友显示名称<br>**markname**: 好友备注名称<br>**timeout**：等待回复的时间，默认30秒<br>**media_path**:媒体路径(可以是文件路径或url，需要做urlencode)|
+|请求参数|**id**: 好友的id<br>**displayname**: 好友显示名称<br>**markname**: 好友备注名称<br>**timeout**：等待回复的时间，默认30秒<br>**media_path**:媒体路径(可以是文件路径或url，需要做urlencode)|
 |数据格式|application/x-www-form-urlencoded|
-|调用示例|http://127.0.0.1:3000/openwx/consult?account=ms-xiaoice&content=haha<br>http://127.0.0.1:3000/openwx/consult?account=ms-xiaoice&media_path=%2ftmp%2fhello.jpg|
+|调用示例|http://127.0.0.1:3000/openwx/consult?displayname=小冰&content=haha<br>http://127.0.0.1:3000/openwx/consult?displayname=%e5%b0%8f%e5%86%b0&media_path=%2ftmp%2fhello.jpg|
 
-主要应用场景是把小冰(微信帐号ms-xiaoice)的智能回复封装成接口，给小冰发好友消息前，你需要先关注小冰的公众号
+主要应用场景是把小冰(中文名称做urlencode: %e5%b0%8f%e5%86%b0)的智能回复封装成接口，给小冰发好友消息前，你需要先关注小冰的公众号
 ```
-GET /openwx/consult?account=ms-xiaoice&content=haha HTTP/1.1
+GET /openwx/consult?displayname=%e5%b0%8f%e5%86%b0&content=haha HTTP/1.1
 User-Agent: curl/7.29.0
 Host: 127.0.0.1:3000
 Accept: */*

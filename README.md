@@ -1,4 +1,4 @@
-Mojo-Weixin v1.3.8 [![Build Status](https://travis-ci.org/sjdy521/Mojo-Weixin.svg?branch=master)](https://travis-ci.org/sjdy521/Mojo-Weixin) [![Join the chat at https://gitter.im/sjdy521/Mojo-Weixin](https://badges.gitter.im/sjdy521/Mojo-Weixin.svg)](https://gitter.im/sjdy521/Mojo-Weixin?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![API列表](https://img.shields.io/badge/doc-API%E5%88%97%E8%A1%A8-brightgreen.svg)](API.md) [![QQ群-498880156](https://img.shields.io/badge/QQ%E7%BE%A4-498880156-blue.svg)](http://jq.qq.com/?_wv=1027&k=kjVJzo) [![IRC](https://img.shields.io/badge/IRC-%E5%AE%98%E6%96%B9%E9%A2%91%E9%81%93-yellow.svg)](http://irc.perfi.wang/?channel=#Mojo-Webqq)
+Mojo-Weixin v1.4.0 [![Build Status](https://travis-ci.org/sjdy521/Mojo-Weixin.svg?branch=master)](https://travis-ci.org/sjdy521/Mojo-Weixin) [![Join the chat at https://gitter.im/sjdy521/Mojo-Weixin](https://badges.gitter.im/sjdy521/Mojo-Weixin.svg)](https://gitter.im/sjdy521/Mojo-Weixin?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![API列表](https://img.shields.io/badge/doc-API%E5%88%97%E8%A1%A8-brightgreen.svg)](API.md) [![QQ群-498880156](https://img.shields.io/badge/QQ%E7%BE%A4-498880156-blue.svg)](http://jq.qq.com/?_wv=1027&k=kjVJzo) [![IRC](https://img.shields.io/badge/IRC-%E5%AE%98%E6%96%B9%E9%A2%91%E9%81%93-yellow.svg)](http://irc.perfi.wang/?channel=#Mojo-Webqq)
 ========================
 
 使用Perl语言编写的微信客户端框架，基于Mojolicious，要求Perl版本5.10+，可通过插件提供基于HTTP协议的api接口供其他语言或系统调用
@@ -14,7 +14,7 @@ Mojo-Weixin v1.3.8 [![Build Status](https://travis-ci.org/sjdy521/Mojo-Weixin.sv
 * 支持 创建群组、群组加人/踢人、发送/接受好友验证申请、设置群组名称、设置好友备注
 * 支持 Windows/Linux/Mac 多平台，支持docker镜像，易安装部署，不懂Perl也能用
 * 提供 基于HTTP协议的API接口 ，简洁丰富，方便和其他编程语言集成
-* 一个产品狗的倾情之作，代码由内而外都更加注重“用户体验”，外加主人人品极好，你懂的
+* 一个产品经理的倾情之作，代码由内而外都更加注重“用户体验”，外加主人人品极好，你会懂的
 
 ### 插件列表
 
@@ -103,16 +103,12 @@ Mojo-Weixin v1.3.8 [![Build Status](https://travis-ci.org/sjdy521/Mojo-Weixin.sv
     |平台    |推荐选择  |下载地址         |
     |:-------|:--------|:---------------|
     |Windows |1. **StrawberryPerl**<br>2. ActivePerl<br>3. **Mojo-StrawberryPerl**|[StrawberryPerl下载地址](http://strawberryperl.com/)<br>[Mojo-StrawberryPerl下载地址](https://github.com/sjdy521/Mojo-StrawberryPerl)<br>[ActivePerl下载地址](http://www.activestate.com/activeperl/downloads)<br>|
-    |Linux   |1. **系统自带**<br>2. **yum/apt等包管理器**<br>3. 官方源码编译<br>4. **Mojo-CentosPerl**<br>5. ActivePerl<br>6. Mojo-ActivePerl<br>7. DWIM-Perl|[Mojo-CentosPerl下载地址](https://github.com/sjdy521/Mojo-CentosPerl)<br>[ActivePerl下载地址](http://www.activestate.com/activeperl/downloads)<br>[Mojo-ActivePerl下载地址](https://github.com/sjdy521/Mojo-ActivePerl)<br>[DWIM-Perl下载地址](http://dwimperl.com/linux.html)|
+    |Linux   |1. **系统自带**<br>2. **yum/apt等包管理器**<br>3. 官方源码编译<br>4. ActivePerl<br>5. DWIM-Perl|[ActivePerl下载地址](http://www.activestate.com/activeperl/downloads)<br>[DWIM-Perl下载地址](http://dwimperl.com/linux.html)|
     |Mac     |1. **系统自带**<br>2. ActivePerl|[ActivePerl下载地址](http://www.activestate.com/activeperl/downloads)|
   
     注意：
     
-    [Mojo-CentosPerl](https://github.com/sjdy521/Mojo-CentosPerl)是基于Centos系统编译打包而成，适合Centos6.5以上的x86_64系统
-    
-    [Mojo-ActivePerl](https://github.com/sjdy521/Mojo-ActivePerl)是基于ActivePerl打包的而成，适用于linux x86_64系统，并且系统glibc 2.15+
-    
-    [Mojo-StrawberryPerl](https://github.com/sjdy521/Mojo-StrawberryPerl)是基于StrawberryPerl精简打包而成，适用于windows 32位/64位系统
+    [Mojo-StrawberryPerl](https://github.com/sjdy521/Mojo-StrawberryPerl)是基于StrawberryPerl精简打包而成，适用于windows 32位/64位系统
 
 2. *安装cpanm工具*（如果系统已经安装了cpanm可以忽略此步骤）
 
@@ -163,6 +159,12 @@ Mojo-Weixin v1.3.8 [![Build Status](https://travis-ci.org/sjdy521/Mojo-Weixin.sv
         $ sudo apt-get install libssl-dev
     
     搞定了编译和运行环境之后，再重新回到 步骤2 安装Mojo::Weixin即可
+    
+    请尽量在root下安装使用，非root下安装使用参考[FAQ](https://github.com/sjdy521/Mojo-Weixin/blob/master/FAQ.md#5-%E9%9D%9Eroot%E8%B4%A6%E5%8F%B7%E5%AE%89%E8%A3%85%E5%90%8E%E6%97%A0%E6%B3%95%E4%BD%BF%E7%94%A8%E9%97%AE%E9%A2%98)
+    
+    如果仍然有问题，Linux上可以尝试执行如下脚本进行依赖模块检查
+    
+        $ curl -ks "https://raw.githubusercontent.com/sjdy521/Mojo-Weixin/master/script/check_dependencies.pl"|perl -
         
 
 ### 如何使用
@@ -229,9 +231,9 @@ Mojo-Weixin v1.3.8 [![Build Status](https://travis-ci.org/sjdy521/Mojo-Weixin.sv
 
 ### 相关文档
 
-* [更新日志](https://github.com/sjdy521/Mojo-Weixin/blob/master/Changes)
-* [开发文档](https://metacpan.org/pod/distribution/Mojo-Weixin/doc/Weixin.pod)
-* [API](API.md)
+* [更新日志](Changes)
+* [开发&配置文档](doc/Weixin.pod)
+* [基于HTTP的API文档](API.md)
 * [FAQ](FAQ.md)
 
 ### 官方交流
@@ -263,4 +265,4 @@ Mojo-Weixin v1.3.8 [![Build Status](https://travis-ci.org/sjdy521/Mojo-Weixin.sv
 
 Copyright (C) 2014 by sjdy521
 
-This library is free software; you can redistribute it and/or modify it under [GNU General Public License v3.0](LICENSE)
+This library is free software; you can redistribute it and/or modify it under [BSD 2-clause "Simplified" license](LICENSE)
