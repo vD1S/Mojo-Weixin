@@ -1,0 +1,12 @@
+requires 'Compress::Raw::Zlib';
+requires 'IO::Compress::Gzip';
+requires 'Time::HiRes';
+requires 'Time::Piece';
+requires 'Time::Seconds';
+requires 'Digest::SHA';
+requires 'Digest::MD5';
+requires 'Encode::Locale';
+requires 'IO::Socket::SSL', '>= 2.009';
+requires 'Mojolicious','>= 8.02';
+recommends 'Term::ANSIColor';
+conflicts 'Mojolicious','< 8.02';
